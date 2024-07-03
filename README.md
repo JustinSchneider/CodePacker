@@ -1,5 +1,9 @@
 # Code Packer
 
+<p align="center">
+  <img src="./images/codepacker-icon.png" alt="Code Packer Logo" width="128"/>
+</p>
+
 Code Packer is a Visual Studio Code extension that allows you to easily pack your project's code files into a single text file. This allows you to share a single file with an LLM to give it full context of your project's code, ensuring accurate context of your project at any time.
 
 ## Features
