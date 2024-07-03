@@ -10,21 +10,16 @@ Code Packer is a Visual Studio Code extension that allows you to easily pack you
 - Include only specific file types in the packed output
 - Easy-to-use interface with status bar button and explorer view
 - Project-specific and global configuration options
+- Debug mode for troubleshooting
 
 ### Pack Code
 Quickly pack your code using the status bar button or command palette.
 
-![Pack Code](images/pack-code.gif)
-
 ### Configure Settings
 Easily configure your packing settings through the extension's UI.
 
-![Configure Settings](images/configure-settings.gif)
-
 ### Explorer View
 View your current Code Packer configuration in the VS Code explorer.
-
-![Explorer View](images/explorer-view.png)
 
 ## Requirements
 
@@ -34,12 +29,35 @@ This extension requires Visual Studio Code version 1.90.0 or higher.
 
 This extension contributes the following settings:
 
+* `codePacker.debug`: Enable or disable debug mode for Code Packer.
 * `codePacker.defaultSourceDirectory`: Set the default source directory for code packing (relative to workspace root).
 * `codePacker.defaultOutputFile`: Set the default output file name for packed code.
 * `codePacker.defaultExclusionPatterns`: Set default patterns for files to exclude from packing.
 * `codePacker.defaultInclusionPatterns`: Set default patterns for files to include in packing.
 
 You can configure these settings globally in your VS Code settings, or per-project in the `.vscode/settings.json` file.
+
+Additionally, you can create a project-specific configuration file `.vscode/code-packer.json` with the following structure:
+
+```json
+{
+  "sourceDirectory": ".",
+  "outputFile": "packed_code.txt",
+  "exclusionPatterns": [
+    "node_modules",
+    "dist",
+    "*.vsix",
+    "package-lock.json"
+  ],
+  "inclusionPatterns": [
+    "*.ts",
+    "*.js",
+    "*.json",
+    "*.md"
+  ],
+  "debug": false
+}
+```
 
 ## How to Use
 
@@ -52,7 +70,7 @@ You can configure these settings globally in your VS Code settings, or per-proje
 
 ## Known Issues
 
-Currently, there are no known issues. If you encounter any problems, please report them on our [GitHub issues page](https://github.com/yourusername/codepacker/issues).
+Currently, there are no known issues. If you encounter any problems, please report them on our [GitHub issues page](https://github.com/JustinSchneider/CodePacker/issues).
 
 ## Release Notes
 
@@ -69,7 +87,7 @@ Initial release of Code Packer:
 
 ## Contributing
 
-If you'd like to contribute to the development of Code Packer, please visit our [GitHub repository](https://github.com/yourusername/codepacker).
+If you'd like to contribute to the development of Code Packer, please visit our [GitHub repository](https://github.com/JustinSchneider/CodePacker).
 
 ## License
 
