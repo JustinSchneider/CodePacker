@@ -6,7 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## 1.0.1
 
-- Fixed issue with recursive directory exclusion
+- Fixed issue with recursive directory exclusion.
+- Fixed issue with recursive named-file exclusion.
 
 ## 1.0.0
 

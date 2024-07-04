@@ -49,9 +49,18 @@ export async function packCode(config: CodePackerConfig): Promise<string | null>
     debugLog('Exclusion patterns:', config.exclusionPatterns);
     debugLog('Inclusion patterns:', config.inclusionPatterns);
 
-    const recursiveExclusionPatterns = config.exclusionPatterns.map(pattern =>
-      pattern.endsWith('/') || pattern.endsWith('\\') ? `${pattern}**` : `**/${pattern}/**`
-    );
+    const recursiveExclusionPatterns = config.exclusionPatterns.map(pattern => {
+      if (pattern.includes('/') || pattern.includes('\\')) {
+        // It's a path, make it recursive
+        return pattern.endsWith('/') || pattern.endsWith('\\') ? `${pattern}**` : `${pattern}/**`;
+      } else if (pattern.includes('*')) {
+        // It's already a glob pattern, make it match in all directories
+        return `**/${pattern}`;
+      } else {
+        // It's a specific filename, make it match in all directories
+        return `**/${pattern}`;
+      }
+    });
 
     // Use '**' to recursively search all directories and files
     const allFiles = await vscode.workspace.findFiles(
