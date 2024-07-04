@@ -49,10 +49,14 @@ export async function packCode(config: CodePackerConfig): Promise<string | null>
     debugLog('Exclusion patterns:', config.exclusionPatterns);
     debugLog('Inclusion patterns:', config.inclusionPatterns);
 
+    const recursiveExclusionPatterns = config.exclusionPatterns.map(pattern =>
+      pattern.endsWith('/') || pattern.endsWith('\\') ? `${pattern}**` : `**/${pattern}/**`
+    );
+
     // Use '**' to recursively search all directories and files
     const allFiles = await vscode.workspace.findFiles(
       new vscode.RelativePattern(sourceDir, '**'),
-      new vscode.RelativePattern(sourceDir, '{' + config.exclusionPatterns.join(',') + '}')
+      new vscode.RelativePattern(sourceDir, `{${recursiveExclusionPatterns.join(',')}}`)
     );
 
     debugLog(`Total files found: ${allFiles.length}`);
@@ -69,7 +73,13 @@ export async function packCode(config: CodePackerConfig): Promise<string | null>
           return match;
         });
 
-      if (shouldInclude) {
+      const shouldExclude = recursiveExclusionPatterns.some(pattern => {
+        const match = minimatch(relativePath, pattern, {matchBase: true});
+        debugLog(`  Exclusion pattern ${pattern}: ${match ? 'matched' : 'not matched'}`);
+        return match;
+      });
+
+      if (shouldInclude && !shouldExclude) {
         debugLog(`Including file: ${relativePath}`);
         return true;
       } else {
