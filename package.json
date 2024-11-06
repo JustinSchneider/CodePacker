@@ -1,8 +1,8 @@
 {
   "name": "codepacker",
   "displayName": "Code Packer",
-  "description": "Pack project code files into a text file for easy sharing with LLMs",
-  "version": "1.0.2",
+  "description": "Pack project code files into text files for easy sharing with LLMs",
+  "version": "1.1.0",
   "icon": "images/codepacker-icon.png",
   "publisher": "JustinSchneider",
   "engines": {
@@ -48,12 +48,12 @@
         "codePacker.defaultSourceDirectory": {
           "type": "string",
           "default": ".",
-          "description": "Default source directory for code packing"
+          "description": "Default source directory for new configurations"
         },
         "codePacker.defaultOutputFile": {
           "type": "string",
           "default": "packed_code.txt",
-          "description": "Default output file name for packed code"
+          "description": "Default output file name for new configurations"
         },
         "codePacker.defaultExclusionPatterns": {
           "type": "array",
@@ -71,7 +71,7 @@
             "*.lock",
             ".vscode"
           ],
-          "description": "Default patterns for files to exclude from packing"
+          "description": "Default patterns for files to exclude from packing in new configurations"
         },
         "codePacker.defaultInclusionPatterns": {
           "type": "array",
@@ -88,7 +88,7 @@
             "*.css",
             "*.scss"
           ],
-          "description": "Default patterns for files to include in packing"
+          "description": "Default patterns for files to include in packing in new configurations"
         }
       }
     }
