@@ -11,7 +11,7 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": ["*"],
   "main": "./dist/extension.js",
   "license": "MIT",
   "repository": {
@@ -22,11 +22,18 @@
     "commands": [
       {
         "command": "extension.packCode",
-        "title": "Pack Code"
+        "title": "Code Packer: Pack Code",
+        "category": "Code Packer"
       },
       {
         "command": "extension.configureCodePacker",
-        "title": "Configure Code Packer"
+        "title": "Code Packer: Configure Settings",
+        "category": "Code Packer"
+      },
+      {
+        "command": "extension.generateDiff",
+        "title": "Code Packer: Generate Git Diff",
+        "category": "Code Packer"
       }
     ],
     "views": {
@@ -44,51 +51,6 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug mode for Code Packer"
-        },
-        "codePacker.defaultSourceDirectory": {
-          "type": "string",
-          "default": ".",
-          "description": "Default source directory for new configurations"
-        },
-        "codePacker.defaultOutputFile": {
-          "type": "string",
-          "default": "packed_code.txt",
-          "description": "Default output file name for new configurations"
-        },
-        "codePacker.defaultExclusionPatterns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "node_modules",
-            "package-lock.json",
-            ".git",
-            "build",
-            "dist",
-            "out",
-            "*.log",
-            "*.lock",
-            ".vscode"
-          ],
-          "description": "Default patterns for files to exclude from packing in new configurations"
-        },
-        "codePacker.defaultInclusionPatterns": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "*.cs",
-            "*.ts",
-            "*.js",
-            "*.json",
-            "*.md",
-            "*.html",
-            "*.css",
-            "*.scss"
-          ],
-          "description": "Default patterns for files to include in packing in new configurations"
         }
       }
     }

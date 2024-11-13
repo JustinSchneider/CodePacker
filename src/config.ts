@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
-import {debugLog, setDebugMode, getSafeProjectName, getDefaultExclusionPatterns, getDefaultInclusionPatterns} from './utils';
+import {debugLog, setDebugMode} from './utils';
 
 export interface DirectoryConfig {
   sourceDirectory: string;
@@ -57,22 +57,9 @@ export function loadConfig(): CodePackerConfig | null {
       console.error('[Code Packer] Error reading config file:', error);
       return null;
     }
-  } else {
-    debugLog('No config file found, using default settings');
-    const settings = vscode.workspace.getConfiguration('codePacker');
-    const safeProjectName = getSafeProjectName(workspaceFolder);
-    const config: CodePackerConfig = {
-      directories: [{
-        sourceDirectory: settings.get('defaultSourceDirectory', '.'),
-        outputFile: settings.get('defaultOutputFile', `${safeProjectName}_packed_code.txt`),
-        exclusionPatterns: settings.get('defaultExclusionPatterns', getDefaultExclusionPatterns()),
-        inclusionPatterns: settings.get('defaultInclusionPatterns', getDefaultInclusionPatterns())
-      }],
-      debug: false
-    };
-    setDebugMode(config.debug);
-    return config;
   }
+  
+  return null; // Return null if no config exists instead of creating defaults
 }
 
 export async function configureCodePacker(): Promise<CodePackerConfig | null> {
@@ -85,21 +72,16 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
   debugLog('Workspace folder:', workspaceFolder.uri.fsPath);
   const currentConfig = loadConfig();
   
+  // Start with an empty config if none exists
   const config: CodePackerConfig = currentConfig || {
-    directories: [{
-      sourceDirectory: '.',
-      outputFile: `${getSafeProjectName(workspaceFolder)}_packed_code.txt`,
-      exclusionPatterns: getDefaultExclusionPatterns(),
-      inclusionPatterns: getDefaultInclusionPatterns()
-    }],
+    directories: [],
     debug: false
   };
 
   while (true) {
     const action = await vscode.window.showQuickPick([
       'Add New Directory',
-      'Edit Directory',
-      'Remove Directory',
+      ...(config.directories.length > 0 ? ['Edit Directory', 'Remove Directory'] : []),
       'Toggle Debug Mode',
       'Save Configuration',
       'Cancel'
@@ -112,6 +94,17 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
     }
 
     if (action === 'Save Configuration') {
+      if (config.directories.length === 0) {
+        const response = await vscode.window.showWarningMessage(
+          'No directories configured. Would you like to add one now?',
+          'Yes', 'No'
+        );
+        if (response === 'Yes') {
+          continue;
+        } else {
+          return null;
+        }
+      }
       break;
     }
 
@@ -137,15 +130,6 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
       const dirIndex = await selectDirectory(config.directories);
       if (dirIndex !== undefined) {
         config.directories.splice(dirIndex, 1);
-        if (config.directories.length === 0) {
-          vscode.window.showWarningMessage('At least one directory configuration is required.');
-          config.directories.push({
-            sourceDirectory: '.',
-            outputFile: `${getSafeProjectName(workspaceFolder)}_packed_code.txt`,
-            exclusionPatterns: getDefaultExclusionPatterns(),
-            inclusionPatterns: getDefaultInclusionPatterns()
-          });
-        }
       }
     }
   }
@@ -168,36 +152,50 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
 async function configureDirectoryConfig(existing?: DirectoryConfig): Promise<DirectoryConfig | null> {
   const sourceDirectory = await vscode.window.showInputBox({
     prompt: 'Enter source directory (relative to workspace root)',
-    value: existing?.sourceDirectory || '.',
-    placeHolder: '.',
-    validateInput: input => input.includes('..') ? 'Path cannot contain ".."' : null
+    value: existing?.sourceDirectory || '',
+    placeHolder: 'src',
+    validateInput: input => {
+      if (!input.trim()) {
+        return 'Source directory cannot be empty';
+      }
+      if (input.includes('..')) {
+        return 'Path cannot contain ".."';
+      }
+      return null;
+    }
   });
   
   if (!sourceDirectory) {return null;}
 
   const outputFile = await vscode.window.showInputBox({
     prompt: 'Enter output file name',
-    value: existing?.outputFile || undefined,
-    placeHolder: 'packed_code.txt'
+    value: existing?.outputFile || '',
+    placeHolder: 'packed/project_source.txt',
+    validateInput: input => {
+      if (!input.trim()) {
+        return 'Output file name cannot be empty';
+      }
+      return null;
+    }
   });
   
   if (!outputFile) {return null;}
 
   const exclusions = await vscode.window.showInputBox({
     prompt: 'Enter exclusion patterns (comma-separated)',
-    value: existing?.exclusionPatterns.join(', ') || getDefaultExclusionPatterns().join(', '),
-    placeHolder: getDefaultExclusionPatterns().join(', ')
+    value: existing?.exclusionPatterns.join(', ') || '',
+    placeHolder: 'node_modules, dist, *.test.ts, *.meta'
   });
   
-  if (!exclusions) {return null;}
+  if (exclusions === undefined) {return null;}
 
   const inclusions = await vscode.window.showInputBox({
     prompt: 'Enter inclusion patterns (comma-separated)',
-    value: existing?.inclusionPatterns.join(', ') || getDefaultInclusionPatterns().join(', '),
-    placeHolder: getDefaultInclusionPatterns().join(', ')
+    value: existing?.inclusionPatterns.join(', ') || '',
+    placeHolder: '*.cs, *.ts, *.json'
   });
   
-  if (!inclusions) {return null;}
+  if (inclusions === undefined) {return null;}
 
   return {
     sourceDirectory,

@@ -4,6 +4,12 @@ All notable changes to the "codepacker" extension will be documented in this fil
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## 1.2.0
+
+- Removed default configuration settings in favor of explicit user configuration
+- Status bar item now shows immediately upon extension activation
+- Improved configuration UI with better validation and clearer prompts
+
 ## 1.1.0
 
 - Added support for multiple directory configurations

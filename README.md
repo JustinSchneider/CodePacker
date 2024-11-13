@@ -4,22 +4,32 @@
   <img src="./images/codepacker-icon.png" alt="Code Packer Logo" width="128"/>
 </p>
 
-Code Packer is a Visual Studio Code extension that allows you to easily pack your project's code files into text files. This makes it simple to share specific parts of your project with LLMs, ensuring accurate context while keeping the file sizes manageable.
+Code Packer is a Visual Studio Code extension that allows you to easily pack your project's code files and git diffs into text files. This makes it simple to share specific parts of your project with LLMs, ensuring accurate context while keeping the file sizes manageable.
 
 ## Features
 
 - Pack multiple code directories into separate text files
+- Generate diffs between git branches for easy sharing
 - Configure different patterns and outputs for each directory
 - Customizable source directories, output files, and file patterns
 - Exclude specific files or directories from packing
 - Include only specific file types in the packed output
-- Easy-to-use interface with status bar button and explorer view
-- Project-specific and global configuration options
+- Easy-to-use interface with status bar buttons and explorer view
+- Project-specific configuration options
 - Debug mode for troubleshooting
 
 ### Pack Code
 
 Quickly pack your code using the status bar button or command palette. You can pack all configured directories at once, creating separate output files for each.
+
+### Generate Branch Diffs
+
+Create text files containing diffs between any two git branches in your repository:
+
+1. Click the "Generate Diff" button in the status bar or use the command palette
+2. Select your source and target branches from the dropdown menus
+3. Choose a name for your output file
+4. The diff will be generated with helpful metadata and saved to your specified file
 
 ### Configure Settings
 
@@ -31,21 +41,12 @@ View and manage your Code Packer configurations in the VS Code explorer. Each di
 
 ## Requirements
 
-This extension requires Visual Studio Code version 1.90.0 or higher.
+- Visual Studio Code version 1.90.0 or higher
+- Git extension must be enabled for diff generation feature
 
-## Extension Settings
+## Configuration
 
-This extension contributes the following settings:
-
-- `codePacker.debug`: Enable or disable debug mode for Code Packer.
-- `codePacker.defaultSourceDirectory`: Set the default source directory for new configurations (relative to workspace root).
-- `codePacker.defaultOutputFile`: Set the default output file name for new configurations.
-- `codePacker.defaultExclusionPatterns`: Set default patterns for files to exclude from packing.
-- `codePacker.defaultInclusionPatterns`: Set default patterns for files to include in packing.
-
-You can configure these settings globally in your VS Code settings, or per-project in the `.vscode/settings.json` file.
-
-Additionally, you can create a project-specific configuration file `.vscode/code-packer.json` with the following structure:
+You can create a project-specific configuration file `.vscode/code-packer.json` with the following structure:
 
 ```json
 {
@@ -67,18 +68,17 @@ Additionally, you can create a project-specific configuration file `.vscode/code
 }
 ```
 
-## How to Use
+Alternatively, you can use the built-in configuration UI to manage your settings.
 
-1. Install the Code Packer extension from the VS Code Marketplace.
-2. Open a project in VS Code.
-3. Click the "Pack Code" button in the status bar or run the "Pack Code" command from the command palette.
-4. If it's your first time using the extension in the project, you'll be prompted to configure your settings.
-5. Add one or more directory configurations through the configuration UI:
-   - Choose "Configure Code Packer" from the command palette
-   - Use "Add New Directory" to create additional configurations
-   - Set the source directory, output file, and patterns for each
-6. The extension will pack your code according to your settings and save it to the specified output files.
-7. You can view and modify your current configurations in the Code Packer explorer view.
+## Commands
+
+All commands can be accessed through the Command Palette (Ctrl+Shift+P / Cmd+Shift+P) under the "Code Packer" category:
+
+- `Code Packer: Pack Code` - Pack your code according to current configuration
+- `Code Packer: Generate Branch Diff` - Create a diff between two git branches
+- `Code Packer: Configure Settings` - Open the configuration UI
+
+These commands are also available through buttons in the status bar for quick access.
 
 ## Known Issues
 
@@ -86,26 +86,7 @@ Currently, there are no known issues. If you encounter any problems, please repo
 
 ## Release Notes
 
-### 1.1.0
-
-- Added support for multiple directory configurations
-- Each directory can now have its own output file and patterns
-- Updated UI to manage multiple directory configurations
-- Maintained backward compatibility with single-directory config
-
-### 1.0.2
-
-- Fixed issue with recursive named-file exclusion.
-
-### 1.0.1
-
-- Fixed issue with recursive directory exclusion.
-
-### 1.0.0
-
-- Initial release
-
----
+See the [Change Log](CHANGELOG.md) for the full version history and list of changes.
 
 ## Contributing
 
