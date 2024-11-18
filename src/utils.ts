@@ -36,30 +36,3 @@ export function getSafeProjectName(workspaceFolder: vscode.WorkspaceFolder): str
   const projectName = path.basename(workspaceFolder.uri.fsPath);
   return projectName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 }
-
-export function getDefaultExclusionPatterns(): string[] {
-  return [
-    'node_modules',
-    '.git',
-    'build',
-    'dist',
-    'out',
-    '*.log',
-    '*.lock',
-    '*.vsix',
-    '.vscode'
-  ];
-}
-
-export function getDefaultInclusionPatterns(): string[] {
-  return [
-    '*.ts',
-    '*.js',
-    '*.json',
-    '*.md',
-    '*.txt',
-    '*.html',
-    '*.css',
-    '*.scss'
-  ];
-}
