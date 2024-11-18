@@ -13,6 +13,7 @@ export interface DirectoryConfig {
 export interface CodePackerConfig {
   directories: DirectoryConfig[];
   debug: boolean;
+  diffConfig?: Partial<DiffConfig>;
 }
 
 export function loadConfig(): CodePackerConfig | null {
@@ -31,7 +32,7 @@ export function loadConfig(): CodePackerConfig | null {
     try {
       const configContent = fs.readFileSync(configPath, 'utf8');
       const rawConfig = JSON.parse(configContent);
-      
+
       // Handle backward compatibility with old config format
       if ('sourceDirectory' in rawConfig) {
         // Convert old format to new format
@@ -58,7 +59,7 @@ export function loadConfig(): CodePackerConfig | null {
       return null;
     }
   }
-  
+
   return null; // Return null if no config exists instead of creating defaults
 }
 
@@ -71,7 +72,7 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
 
   debugLog('Workspace folder:', workspaceFolder.uri.fsPath);
   const currentConfig = loadConfig();
-  
+
   // Start with an empty config if none exists
   const config: CodePackerConfig = currentConfig || {
     directories: [],
@@ -136,7 +137,7 @@ export async function configureCodePacker(): Promise<CodePackerConfig | null> {
 
   const configPath = path.join(workspaceFolder.uri.fsPath, '.vscode', 'code-packer.json');
   try {
-    fs.mkdirSync(path.dirname(configPath), { recursive: true });
+    fs.mkdirSync(path.dirname(configPath), {recursive: true});
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
     debugLog('Config file written successfully');
     vscode.window.showInformationMessage('Code Packer configuration saved successfully.');
@@ -164,7 +165,7 @@ async function configureDirectoryConfig(existing?: DirectoryConfig): Promise<Dir
       return null;
     }
   });
-  
+
   if (!sourceDirectory) {return null;}
 
   const outputFile = await vscode.window.showInputBox({
@@ -178,7 +179,7 @@ async function configureDirectoryConfig(existing?: DirectoryConfig): Promise<Dir
       return null;
     }
   });
-  
+
   if (!outputFile) {return null;}
 
   const exclusions = await vscode.window.showInputBox({
@@ -186,7 +187,7 @@ async function configureDirectoryConfig(existing?: DirectoryConfig): Promise<Dir
     value: existing?.exclusionPatterns.join(', ') || '',
     placeHolder: 'node_modules, dist, *.test.ts, *.meta'
   });
-  
+
   if (exclusions === undefined) {return null;}
 
   const inclusions = await vscode.window.showInputBox({
@@ -194,7 +195,7 @@ async function configureDirectoryConfig(existing?: DirectoryConfig): Promise<Dir
     value: existing?.inclusionPatterns.join(', ') || '',
     placeHolder: '*.cs, *.ts, *.json'
   });
-  
+
   if (inclusions === undefined) {return null;}
 
   return {
@@ -218,3 +219,46 @@ async function selectDirectory(directories: DirectoryConfig[]): Promise<number |
 
   return selected?.index;
 }
+
+export interface DiffConfig {
+  // Branches to compare
+  sourceBranch: string;
+  targetBranch: string;
+  outputFile: string;
+
+  // Filtering patterns
+  exclusionPatterns?: string[];  // e.g. ["*.meta", "ProjectSettings/*"]
+  inclusionPatterns?: string[];  // e.g. ["*.cs", "*.ts"]
+
+  // Content options
+  includeBinaryFiles?: boolean;  // If true, at least note their presence
+  includeMetaFiles?: boolean;    // Unity meta files
+  maxFileSize?: number;         // Skip files larger than this (in KB)
+}
+
+export const DEFAULT_DIFF_CONFIG: Partial<DiffConfig> = {
+  exclusionPatterns: [
+    "node_modules/**",    // More specific pattern
+    "dist/**",
+    "out/**",
+    "*.meta",             // Unity meta files
+    "ProjectSettings/**", // Unity project settings
+    "*.asset",           // Unity assets
+    "package-lock.json", // NPM lock file
+    "*.vsix",           // VS Code extension package
+    "Library/**",        // Unity-specific directory
+    "Temp/**",          // Unity-specific directory
+    "Logs/**"           // Unity-specific directory
+  ],
+  inclusionPatterns: [
+    "Assets/**/*.cs",     // Unity C# files
+    "Assets/**/*.unity",  // Unity scene files
+    "Assets/**/*.prefab", // Unity prefab files
+    "Assets/**/*.asset",  // Unity asset files (if not excluded)
+    "Packages/**/*.json", // Package manifests
+    "ProjectSettings/**/*.asset" // Allow specific ProjectSettings
+  ],
+  includeBinaryFiles: false,
+  includeMetaFiles: false,
+  maxFileSize: 1024        // 1MB
+};
