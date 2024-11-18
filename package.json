@@ -2,7 +2,7 @@
   "name": "codepacker",
   "displayName": "Code Packer",
   "description": "Pack project code files into text files for easy sharing with LLMs",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "icon": "images/codepacker-icon.png",
   "publisher": "JustinSchneider",
   "engines": {
@@ -11,7 +11,10 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": ["*"],
+  "activationEvents": [
+    "onStartupFinished",
+    "workspaceContains:**/.vscode/code-packer.json"
+  ],
   "main": "./dist/extension.js",
   "license": "MIT",
   "repository": {

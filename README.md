@@ -4,27 +4,19 @@
   <img src="./images/codepacker-icon.png" alt="Code Packer Logo" width="128"/>
 </p>
 
-Code Packer is a Visual Studio Code extension that allows you to easily pack your project's code files and git diffs into text files. This makes it simple to share specific parts of your project with LLMs, ensuring accurate context while keeping the file sizes manageable.
+Code Packer is a Visual Studio Code extension that allows you to easily pack your project's code files into text files for sharing with LLMs. This makes it simple to share specific parts of your project while keeping the file sizes manageable.
 
 ## Features
-
-- Pack multiple code directories into separate text files
-- Generate diffs between git branches for easy sharing
-- Configure different patterns and outputs for each directory
-- Customizable source directories, output files, and file patterns
-- Exclude specific files or directories from packing
-- Include only specific file types in the packed output
-- Easy-to-use interface with status bar buttons and explorer view
-- Project-specific configuration options
-- Debug mode for troubleshooting
 
 ### Pack Code
 
 Quickly pack your code using the status bar button or command palette. You can pack all configured directories at once, creating separate output files for each.
 
-### Generate Branch Diffs
+### Generate Branch Diffs (Experimental)
 
-Create text files containing diffs between any two git branches in your repository:
+> **Note**: The Git diff feature is currently experimental. While functional, you may encounter some issues with certain file types or edge cases. We're actively working on improvements.
+
+Generate text files containing diffs between any two git branches in your repository:
 
 1. Click the "Generate Diff" button in the status bar or use the command palette
 2. Select your source and target branches from the dropdown menus
@@ -64,7 +56,13 @@ You can create a project-specific configuration file `.vscode/code-packer.json` 
       "inclusionPatterns": ["*.ts", "*.js", "*.json"]
     }
   ],
-  "debug": false
+  "debug": false,
+  "diffConfig": {
+    "exclusionPatterns": ["node_modules/**", "dist/**"],
+    "inclusionPatterns": ["src/**/*.ts", "*.json"],
+    "maxFileSize": 2048,
+    "includeBinaryFiles": false
+  }
 }
 ```
 
@@ -75,14 +73,18 @@ Alternatively, you can use the built-in configuration UI to manage your settings
 All commands can be accessed through the Command Palette (Ctrl+Shift+P / Cmd+Shift+P) under the "Code Packer" category:
 
 - `Code Packer: Pack Code` - Pack your code according to current configuration
-- `Code Packer: Generate Branch Diff` - Create a diff between two git branches
+- `Code Packer: Generate Branch Diff` - Create a diff between two git branches (experimental)
 - `Code Packer: Configure Settings` - Open the configuration UI
 
 These commands are also available through buttons in the status bar for quick access.
 
 ## Known Issues
 
-Currently, there are no known issues. If you encounter any problems, please report them on our [GitHub issues page](https://github.com/JustinSchneider/CodePacker/issues).
+- The Git diff feature is experimental and may have issues with certain file types or edge cases
+- Binary files are currently excluded from diffs by default
+- Large files (>1MB) are excluded from diffs by default
+
+For other issues or to report a bug, please visit our [GitHub issues page](https://github.com/JustinSchneider/CodePacker/issues).
 
 ## Release Notes
 

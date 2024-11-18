@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Removed default configuration settings in favor of explicit user configuration
 - Status bar item now shows immediately upon extension activation
 - Improved configuration UI with better validation and clearer prompts
+- Added experimental Diff feature
 
 ## 1.1.0
 
